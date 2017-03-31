@@ -5,8 +5,8 @@
 #include <math.h>
 
 #include "lab1.h"
-static const int W = 500;
-static const int H = 500;
+static const int W = 400;
+static const int H = 400;
 static const unsigned NFRAME = 240;
 
 struct Lab1VideoGenerator::Impl {
