@@ -33,8 +33,6 @@ __global__ void SimpleClone(
 	}
 }
 
-// ref: https://github.com/gdoggg2032/GPGPU_Programming_2016S/blob/master/lab3/lab3.cu
-
 __global__ void CalculateFixed(
 		const float *background,
 		const float *target,
@@ -50,81 +48,84 @@ __global__ void CalculateFixed(
             
             const int curt = wt*yt+xt;
             const int yb = oy+yt, xb = ox+xt;
-            const int curb = wb*yb+xb;
             
-            
-            
-            
-            fixed[curt*3+0] = 0;
-            fixed[curt*3+1] = 0;
-            fixed[curt*3+2] = 0;
-            
-            if (0 < yt) {
-                fixed[curt*3+0] += target[curt*3+0]-target[(curt-wt)*3+0];
-                fixed[curt*3+1] += target[curt*3+1]-target[(curt-wt)*3+1];
-                fixed[curt*3+2] += target[curt*3+2]-target[(curt-wt)*3+2];
-            }
-            
-            if(yt < ht-1) {
-                fixed[curt*3+0] += target[curt*3+0]-target[(curt+wt)*3+0];
-                fixed[curt*3+1] += target[curt*3+1]-target[(curt+wt)*3+1];
-                fixed[curt*3+2] += target[curt*3+2]-target[(curt+wt)*3+2];
-            }
-            
-            if(0 < xt) {
-                fixed[curt*3+0] += target[curt*3+0]-target[(curt-1)*3+0];
-                fixed[curt*3+1] += target[curt*3+1]-target[(curt-1)*3+1];
-                fixed[curt*3+2] += target[curt*3+2]-target[(curt-1)*3+2];
-            }
-            
-            if(xt < wt-1) {
-                fixed[curt*3+0] += target[curt*3+0]-target[(curt+1)*3+0];
-                fixed[curt*3+1] += target[curt*3+1]-target[(curt+1)*3+1];
-                fixed[curt*3+2] += target[curt*3+2]-target[(curt+1)*3+2];
-            }
-            
-            // 0 < yb and
-            // yb < hb-1 and
-            // 0 < xb and
-            // xb < wb-1 and
-            
-            // yt == 0 || 
-            // yt == ht-1 ||
-            // xt == 0 || 
-            // xt == wt-1 ||
-            
-            
-            if(yt == 0 || mask[curt-wt] < 127.0f) {
-                fixed[curt*3+0] += background[(curb-wb)*3+0];
-                fixed[curt*3+1] += background[(curb-wb)*3+1];
-                fixed[curt*3+2] += background[(curb-wb)*3+2];
-            }
-            
-            if(yt == ht-1 || mask[curt+wt] < 127.0f) {
-                fixed[curt*3+0] += background[(curb+wb)*3+0];
-                fixed[curt*3+1] += background[(curb+wb)*3+1];
-                fixed[curt*3+2] += background[(curb+wb)*3+2];
-            }
-            
-            if(xt == 0 || mask[curt-1] < 127.0f) {
-                fixed[curt*3+0] += background[(curb-1)*3+0];
-                fixed[curt*3+1] += background[(curb-1)*3+1];
-                fixed[curt*3+2] += background[(curb-1)*3+2];
-            }
-            
-            if(xt == wt-1 || mask[curt+1] < 127.0f) {
-                fixed[curt*3+0] += background[(curb+1)*3+0];
-                fixed[curt*3+1] += background[(curb+1)*3+1];
-                fixed[curt*3+2] += background[(curb+1)*3+2];
-            }
-            
-            
-            
-            if( mask[curt] < 127.0f ) {
-                fixed[curt*3+0] = background[curb*3+0];
-                fixed[curt*3+1] = background[curb*3+1];
-                fixed[curt*3+2] = background[curb*3+2];
-            }
+            if (0 < yb and yb < hb and 0 < xb and xb < wb) {
+                
+                const int curb = wb*yb+xb;
+                
+                
+                
+                
+                fixed[curt*3+0] = 0;
+                fixed[curt*3+1] = 0;
+                fixed[curt*3+2] = 0;
+                
+                if (0 < yt) {
+                    fixed[curt*3+0] += target[curt*3+0]-target[(curt-wt)*3+0];
+                    fixed[curt*3+1] += target[curt*3+1]-target[(curt-wt)*3+1];
+                    fixed[curt*3+2] += target[curt*3+2]-target[(curt-wt)*3+2];
+                }
+                
+                if(yt < ht-1) {
+                    fixed[curt*3+0] += target[curt*3+0]-target[(curt+wt)*3+0];
+                    fixed[curt*3+1] += target[curt*3+1]-target[(curt+wt)*3+1];
+                    fixed[curt*3+2] += target[curt*3+2]-target[(curt+wt)*3+2];
+                }
+                
+                if(0 < xt) {
+                    fixed[curt*3+0] += target[curt*3+0]-target[(curt-1)*3+0];
+                    fixed[curt*3+1] += target[curt*3+1]-target[(curt-1)*3+1];
+                    fixed[curt*3+2] += target[curt*3+2]-target[(curt-1)*3+2];
+                }
+                
+                if(xt < wt-1) {
+                    fixed[curt*3+0] += target[curt*3+0]-target[(curt+1)*3+0];
+                    fixed[curt*3+1] += target[curt*3+1]-target[(curt+1)*3+1];
+                    fixed[curt*3+2] += target[curt*3+2]-target[(curt+1)*3+2];
+                }
+                
+                // 0 < yb and
+                // yb < hb-1 and
+                // 0 < xb and
+                // xb < wb-1 and
+                
+                // yt == 0 || 
+                // yt == ht-1 ||
+                // xt == 0 || 
+                // xt == wt-1 ||
+                
+                
+                if(yt == 0 || mask[curt-wt] < 127.0f) {
+                    fixed[curt*3+0] += background[(curb-wb)*3+0];
+                    fixed[curt*3+1] += background[(curb-wb)*3+1];
+                    fixed[curt*3+2] += background[(curb-wb)*3+2];
+                }
+                
+                if(yt == ht-1 || mask[curt+wt] < 127.0f) {
+                    fixed[curt*3+0] += background[(curb+wb)*3+0];
+                    fixed[curt*3+1] += background[(curb+wb)*3+1];
+                    fixed[curt*3+2] += background[(curb+wb)*3+2];
+                }
+                
+                if(xt == 0 || mask[curt-1] < 127.0f) {
+                    fixed[curt*3+0] += background[(curb-1)*3+0];
+                    fixed[curt*3+1] += background[(curb-1)*3+1];
+                    fixed[curt*3+2] += background[(curb-1)*3+2];
+                }
+                
+                if(xt == wt-1 || mask[curt+1] < 127.0f) {
+                    fixed[curt*3+0] += background[(curb+1)*3+0];
+                    fixed[curt*3+1] += background[(curb+1)*3+1];
+                    fixed[curt*3+2] += background[(curb+1)*3+2];
+                }
+                
+                
+                
+                if( mask[curt] < 127.0f ) {
+                    fixed[curt*3+0] = background[curb*3+0];
+                    fixed[curt*3+1] = background[curb*3+1];
+                    fixed[curt*3+2] = background[curb*3+2];
+                }
                 
                 
                 
@@ -132,7 +133,7 @@ __global__ void CalculateFixed(
                 
                
             
-        
+            }
     }        
 }
 
