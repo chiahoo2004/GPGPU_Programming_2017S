@@ -33,6 +33,8 @@ __global__ void SimpleClone(
 	}
 }
 
+// ref: https://github.com/gdoggg2032/GPGPU_Programming_2016S/blob/master/lab3/lab3.cu
+
 __global__ void CalculateFixed(
 		const float *background,
 		const float *target,
